@@ -75,7 +75,7 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 							ans.answer=Protocol::ANS_NAK;
 							ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
 						}
-						ans.sendResponseToListArt();
+						ans.sendResponseToListArt(list);
 					}else{
 						throw ConnectionClosedException(); //We are closing connection.
 					}
