@@ -81,13 +81,13 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 					}
 					break;
 				case Protocol::COM_CREATE_ART :
-				
+					///
 					break;
 				case Protocol::COM_DELETE_ART :
-				
+					////
 					break;
 				case Protocol::COM_GET_ART :
-				
+					////
 					break;
 				case Protocol::COM_END ://Change it to default?
 					throw ConnectionClosedException(); //We are closing connection.
