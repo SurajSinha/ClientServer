@@ -6,15 +6,69 @@
 
 #include "server.h"
 #include "connection.h"
+#include "handler.h"
 #include "connectionclosedexception.h"
-
-void connectionHandler(Server &server, database &db){
+#include "ans.h"
+#include "com.h"
+using namespace std;
+void connectionHandler(Server& server, database& db,MessageHandler& mh){
+	Ans ans(mh);
+	Com com(mh);
 	while(true){
 		// Nullptr is returned if new Client wishes to communicate.
 		auto conn=server.waitForActivity();
+		handler.SetConnection(conn);
 		if(!conn){
 			try{
 				// Handle Client Requests.
+				string cmd=MessageHandler::recieveCode();
+				switch(cmd){
+				case Protocol::COM_LIST_NG :
+					if(com.comListNGRead()){
+						Database::newsItr beg=newsGroupBegin();
+						Database::newsItr end=newsGroupEnd();
+						if(beg!=end){
+							vector<Newsgroup> ngs(beg,end);
+							ans.sendListNg(ngs);
+						}	
+					}
+					break;
+				case Protocol::COM_CREATE_NG :
+					string name;
+					if(com.readCreateNG(name)){
+						size_t resultCode=db.createNG(name);
+						if(resultCode==Protocol::ANS_ACK){
+							ans.answer=resultCode;
+						}else{
+							ans.answer=Protocol::ANS_NAK;
+							ans.errorCode=resultCode;
+						}
+						ans.sendResponseToCreateNG();
+						
+					}else{
+						throw ConnectionClosedException(); //We are closing connection.
+					}
+				break;
+				case Protocol::COM_DELETE_NG :
+					
+				break;
+				case Protocol::COM_LIST_ART :
+				
+				break;
+				case Protocol::COM_CREATE_ART :
+				
+				break;
+				case Protocol::COM_DELETE_ART :
+				
+				break;
+				case Protocol::COM_GET_ART :
+				
+				break;
+				case Protocol::COM_END :
+				
+				break;
+				
+				}
 				
 			
 			}catch(ConnectionClosedException& e){
@@ -56,7 +110,9 @@ void connectionHandler(Server &server, database &db){
 	}
 	//Handles connections with the Client.
 	Database db;
-	connectionHandler(server,db);
+	MessageHandler handler;
+	
+	connectionHandler(server,db,handler);
 	// Kommer att göra om denna metod till en 
 	//template metod för att hantera db på HDD. 
 	

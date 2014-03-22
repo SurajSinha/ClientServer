@@ -13,7 +13,13 @@ private:
 	
 	std::shared_ptr<Connection> conn;
 public:
-
+////// 
+	MessageHandler() {}
+	void SetConnection(std::shared_ptr<Connection> con){
+		conn=con;
+	}
+	
+//////	
 	MessageHandler(std::shared_ptr<Connection> con) : conn(con)
 	{	
 	}
