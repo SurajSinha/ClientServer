@@ -5,6 +5,7 @@
 		Ans(MessageHandler &m):mh(m){}
 		bool sendListNg(vector<Newsgroup>& ngs);
 		void sendResponseToCreateNG();
+		void sendResponseToDeleteNG();
 		//bool sendListArt(vector<Newsgroup>& ngs);
 		
 	

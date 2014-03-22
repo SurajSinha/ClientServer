@@ -6,7 +6,7 @@
 		Com(MessageHandler &m):mh(m){}
 		bool comListNGRead();
 		bool readCreateNG(string& str);
-		
+		bool readDeleteNG(int& nbr);
 	
 	private:
 		MessageHandler mh;

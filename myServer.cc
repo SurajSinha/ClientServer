@@ -50,7 +50,19 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 					}
 				break;
 				case Protocol::COM_DELETE_NG :
-					
+					int nbr;
+					if(com.readDeleteNG(int nbr)){
+						size_t resultCode=db.deleteNewsGroup(nbr);
+						if(resultCode==Protocol::ANS_ACK){
+							ans.answer=resultCode;
+						}else{
+							ans.answer=Protocol::ANS_NAK;
+							ans.errorCode=resultCode;
+						}
+						ans.sendResponseToDeleteNG();
+					}else{
+						throw ConnectionClosedException(); //We are closing connection.
+					}
 				break;
 				case Protocol::COM_LIST_ART :
 				

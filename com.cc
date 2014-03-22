@@ -1,5 +1,6 @@
 #include "com.h"
 #include <string>
+
 bool Com::comListNGRead(){
 	if(mh.recieveCode()==Protocol::COM_END){
 		return true;
@@ -8,6 +9,7 @@ bool Com::comListNGRead(){
 	}
 
 }
+
 bool Com::readCreateNG(string& str){
 	str=mh.recieveStringParameter();
 	if(mh.recieveCode()==Protocol::COM_END){
@@ -15,6 +17,13 @@ bool Com::readCreateNG(string& str){
 	}else{
 		return false;
 	}
+}
 
-
+bool Com::readDeleteNG(int& nbr){
+	nbr=mh.recieveIntParameter();
+	if(mh.recieveCode()==Protocol::COM_END){
+		return true;
+	}else{
+		return false;
+	}
 }
