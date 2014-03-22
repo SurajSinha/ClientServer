@@ -27,3 +27,13 @@ bool Com::readDeleteNG(int& nbr){
 		return false;
 	}
 }
+
+bool Com::readListArtCmd(int& nbr){
+	nbr=mh.recieveIntParameter();
+	if(mh.recieveCode()==Protocol::COM_END){
+		return true;
+	}else{
+		return false;
+	}
+
+}

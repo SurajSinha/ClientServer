@@ -10,6 +10,7 @@
 #include "connectionclosedexception.h"
 #include "ans.h"
 #include "com.h"
+#include "article.h"
 using namespace std;
 void connectionHandler(Server& server, database& db,MessageHandler& mh){
 	Ans ans(mh);
@@ -48,7 +49,7 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 					}else{
 						throw ConnectionClosedException(); //We are closing connection.
 					}
-				break;
+					break;
 				case Protocol::COM_DELETE_NG :
 					int nbr;
 					if(com.readDeleteNG(int nbr)){
@@ -63,22 +64,34 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 					}else{
 						throw ConnectionClosedException(); //We are closing connection.
 					}
-				break;
+					break;
 				case Protocol::COM_LIST_ART :
-				
-				break;
+					int nbr;
+					if(com.readListArtCmd(nbr)){
+						vector<Article> list=db.getArticles(nbr);
+						if(list){//db returns null if NG doesn't exist.
+							ans.answer=Protocol::ANS_ACK;
+						}else{
+							ans.answer=Protocol::ANS_NAK;
+							ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+						}
+						ans.sendResponseToListArt();
+					}else{
+						throw ConnectionClosedException(); //We are closing connection.
+					}
+					break;
 				case Protocol::COM_CREATE_ART :
 				
-				break;
+					break;
 				case Protocol::COM_DELETE_ART :
 				
-				break;
+					break;
 				case Protocol::COM_GET_ART :
 				
-				break;
-				case Protocol::COM_END :
-				
-				break;
+					break;
+				case Protocol::COM_END ://Change it to default?
+					throw ConnectionClosedException(); //We are closing connection.
+					break;
 				
 				}
 				

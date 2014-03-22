@@ -6,6 +6,7 @@
 		bool sendListNg(vector<Newsgroup>& ngs);
 		void sendResponseToCreateNG();
 		void sendResponseToDeleteNG();
+		void sendResponseToListArt(vector<Article>& art);
 		//bool sendListArt(vector<Newsgroup>& ngs);
 		
 	
