@@ -11,15 +11,31 @@ void Database::newArticle(shared_ptr<Article> article){
 	}
 	it->second->addArticle(article);
 };
-void Database::newNewsGroup(shared_ptr<NewsGroup> newsGroup){
+vector<Article> Database::getArticles(size_t n){
+	vector<Article> a;
+	auto it = mapId.find(n);
+	if(it==mapId.end()){
+		throw NewsGroupNonExistentException();
+	}
+	auto start = it->second->articleBegin();
+	auto end = it->second->articleEnd();
+	while(start!=end){
+		a.push_back(*start->second);
+		++start;
+	}
+	return a;
+	
+};
+size_t Database::newNewsGroup(shared_ptr<NewsGroup> newsGroup){
 	auto it = mapName.find(newsGroup->name);
 	if(it != mapName.end()){
-		throw NewsGroupExistsException();
+		return 52;
 	}
 	newsGroup->id = nbrOfNewsGroups;
 	++nbrOfNewsGroups;
 	mapName.insert(make_pair(newsGroup->name, newsGroup);
 	mapId.insert(make_pair(newsGroup->id, newsGroup);
+	return 28;
 };
 shared_ptr<Article> getArticle(size_t articleID, size_t newsGroupID){
 	auto it = mapId.find(newsGroupID);
@@ -35,15 +51,17 @@ void Database::deleteArticle(size_t articleID, size_t newsGroupID){
 	}
 	it->second->deleteArticle(articleID);
 };
-void Database::daleteNewsGroup(size_t newsGroupID){
+size_t Database::deleteNewsGroup(size_t newsGroupID){
 	auto it = mapId.find(newsGroupID);
 	if(it == mapId.end()){
-		throw NewsGroupNonExistentException();
+		return 51;
 	}
 	auto it2 = mapName.find(it->second->name);
 	mapId.erase(it);
 	mapName.erase(it2);
+	return 28;
 };
+
 newsItr Database::newsGroupBegin(){
 	return mapId.begin();
 };
