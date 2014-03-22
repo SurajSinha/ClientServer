@@ -40,6 +40,15 @@
 		auto conn=server.waitForActivity();
 		if(!conn){
 			try{
+				// Handle Client Requests.
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			}catch(ConnectionClosedException& e){
 				server.deregisterConnection(conn);
