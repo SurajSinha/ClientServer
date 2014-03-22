@@ -21,7 +21,7 @@ class Database {
 	vector<Article> getArticles(size_t n);
 	size_t deleteNewsGroup(size_t newsGroupID);
 	size_t createNewsGroup(size_t newsGroupID, string name);
-	
+	 
 	private:
 	bool loadswitch = false;
 	size_t nbrOfNewsGroups = 1;
