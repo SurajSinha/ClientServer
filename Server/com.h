@@ -8,7 +8,9 @@
 		bool comListNGRead();
 		bool readCreateNG(string& str);
 		bool readDeleteNG(int& nbr);
+		bool createArtRead(int& nbr,string& title,string& author,string& text);
 		bool readListArtCmd(int& nbr);
+		bool deleteArtRead(int& nbr1,int &nbr2);
 	private:
 		MessageHandler mh;
 		

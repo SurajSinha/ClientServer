@@ -7,8 +7,9 @@
 		void sendResponseToCreateNG();
 		void sendResponseToDeleteNG();
 		void sendResponseToListArt(vector<Article>& art);
+		void sendResonseToCreateArt();
 		//bool sendListArt(vector<Newsgroup>& ngs);
-		
+		void sendResponseToDeleteArt();
 	
 	private:
 		MessageHandler mh;
