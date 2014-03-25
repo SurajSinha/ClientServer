@@ -1,16 +1,17 @@
 #include "database.h"
 #include "article.h"
-#include "newsgroup.h"
-
-Database::Database{ };
-~Database::Database{ };
+#include "newsGroup.h"
+#include <fstream>
+using namespace std;
+Database::Database(){ }
+Database::~Database(){ }
 void Database::newArticle(shared_ptr<Article> article){
 	auto it = mapId.find(article->newsGroup);
 	if(it == mapId.end()){
 		throw NewsGroupNonExistentException();
 	}
 	it->second->addArticle(article);
-};
+}
 vector<Article> Database::getArticles(size_t n){
 	vector<Article> a;
 	auto it = mapId.find(n);
@@ -25,74 +26,76 @@ vector<Article> Database::getArticles(size_t n){
 	}
 	return a;
 	
-};
+}
 size_t Database::newNewsGroup(shared_ptr<NewsGroup> newsGroup){
 	auto it = mapName.find(newsGroup->name);
 	if(it != mapName.end()){
-		return 52;
+		return NewsGroupExists;
 	}
 	newsGroup->id = nbrOfNewsGroups;
 	++nbrOfNewsGroups;
-	mapName.insert(make_pair(newsGroup->name, newsGroup);
-	mapId.insert(make_pair(newsGroup->id, newsGroup);
-	return 28;
-};
-shared_ptr<Article> getArticle(size_t articleID, size_t newsGroupID){
+	mapName.insert(make_pair(newsGroup->name, newsGroup));
+	mapId.insert(make_pair(newsGroup->id, newsGroup));
+	return ACK;
+}
+shared_ptr<Article> Database::getArticle(size_t articleID, size_t newsGroupID){
 	auto it = mapId.find(newsGroupID);
 	if(it == mapId.end()){
 		throw NewsGroupNonExistentException();
 	}
 	return it->second->getArticle(articleID);
-};
+}
 void Database::deleteArticle(size_t articleID, size_t newsGroupID){
 	auto it = mapId.find(newsGroupID);
 	if(it == mapId.end()){
 		throw NewsGroupNonExistentException();
 	}
 	it->second->deleteArticle(articleID);
-};
+}
 size_t Database::deleteNewsGroup(size_t newsGroupID){
 	auto it = mapId.find(newsGroupID);
 	if(it == mapId.end()){
-		return 51;
+		return NewsGroupExists;
 	}
 	auto it2 = mapName.find(it->second->name);
 	mapId.erase(it);
 	mapName.erase(it2);
-	return 28;
-};
+	return ACK;
+}
 
-newsItr Database::newsGroupBegin(){
+Database::articleItr Database::newsGroupBegin(){
 	return mapId.begin();
-};
-newsItr Database::newsGroupEnd(){
+}
+Database::articleItr Database::newsGroupEnd(){
 	return mapId.end();
-};
+}
 void Database::load(){
-	loadswitch = false;
+/*	loadswitch = false;
 	ifstream file("awesome.txt");
 	string s;
 	string n;
 	if(file.is_open()){
-		while(fin >> s && !loadSwitch){
+		while(file >> s && !loadswitch){
 			if(s=="###Switch### "){
 				loadswitch = true;
 			}else{
-				fin>>n;
-				shared_ptr<newsGroup> ptr(n);
+				file>>n;
+				
+				shared_ptr<NewsGroup> ptr(n);
 				mapName.insert(make_pair(s, ptr));
 			}
 		}
-		while(fin >> s){
-			fin>>n;
-			shared_ptr<newsGroup> ptr(n);
+		while(file >> s){
+			file>>n;
+			shared_ptr<NewsGroup> ptr(n);
 			istringstream f(s);
 			size_t num;
 			f>>num;
 			mapId.insert(make_pair(num, ptr));
 		}
 	}
-};
+*/
+}
 void Database::save(){
 ofstream file;
 file.open("awesome.txt");
@@ -108,5 +111,4 @@ while(it2!=mapId.end()){
 	++it2;
 	}
 file.close();
-};
 }
