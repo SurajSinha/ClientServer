@@ -60,7 +60,7 @@ void Ans::sendResponseToDeleteArt(){
   }
   mh.sendCode(Protocol::ANS_END);
 }
-
+/*
 void Ans::sendResponseToGetArt(shared_ptr<Article> ptr){
   mh.sendCode(Protocol::ANS_GET_ART);
   mh.sendCode(answer);
@@ -73,5 +73,5 @@ void Ans::sendResponseToGetArt(shared_ptr<Article> ptr){
   }
   mh.sendCode(Protocol::ANS_END);
 
-}
+}*/
 

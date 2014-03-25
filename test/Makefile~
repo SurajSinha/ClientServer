@@ -17,7 +17,7 @@ LDFLAGS =   -g -L..
 #LDFLAGS +=  -stdlib=libc++
 
 # Libraries
-LDLIBS = -lclientserver -ldatabase
+LDLIBS = -lclientserver
 
 # Targets
 PROGS = myserver myclient

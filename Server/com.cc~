@@ -41,10 +41,10 @@ bool Com::deleteArtRead(size_t& nbr1,size_t& nbr2){
   nbr2=mh.recieveIntParameter();
   return mh.recieveCode()==Protocol::COM_END;
 }
-
+/*
 bool Com::readGetArtCmd(int& ngId,int& aId){
   ngId=mh.recieveIntParameter();
   aId=mh.recieveIntParameter();
   return mh.recieveCode()==Protocol::COM_END;
 }
-
+*/

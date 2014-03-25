@@ -11,8 +11,8 @@
 		bool readListArtCmd(int& nbr);
 		bool createArtRead(int& nbr,std::string& title,std::string& author,std::string& text);
 		
-		bool deleteArtRead(size_t& nbr1,size_t& nbr2);
-		bool readGetArtCmd(int& ngId,int& aId);
+		bool deleteArtRead(size_t& nbr1,size_t& nbr2);/*
+		bool readGetArtCmd(int& ngId,int& aId);*/
 	private:
 		MessageHandler mh;
 		

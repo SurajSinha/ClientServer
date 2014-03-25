@@ -14,8 +14,8 @@
 		void sendResponseToListArt(std::vector<Article>& art);
 		void sendResponseToCreateArt();
 		
-		void sendResponseToDeleteArt();
-		void sendResponseToGetArt(std::shared_ptr<Article> ptr);
+		void sendResponseToDeleteArt();/*
+		void sendResponseToGetArt(std::shared_ptr<Article> ptr);*/
 		size_t  errorCode;
 		size_t  answer;
 	private:

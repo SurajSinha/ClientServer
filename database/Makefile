@@ -1,40 +1,36 @@
-# Define the compiler and the linker. The linker must be defined since
-# the implicit rule for linking uses CC as the linker. g++ can be
+#
+# Makefile to make the file libdatabase.a, containing
+# database.o and newsGroup.o
+#
+# Define the compiler. g++ can be
 # changed to clang++.
 CXX = g++
 CC  = g++
 
 # Define preprocessor, compiler, and linker flags. Uncomment the # lines
-# if you use clang++ and wish to use libc++ instead of libstd++.
-CPPFLAGS  =-I..
-
+# if you use clang++ and wish to use libc++ instead of libstdc++.
 CXXFLAGS =  -g -O2 -Wall -W -pedantic-errors
 CXXFLAGS += -Wmissing-braces -Wparentheses -Wold-style-cast 
 CXXFLAGS += -std=c++11 
-LDFLAGS =   -g -L..
-#CPPFLAGS += -stdlib=libc++
+#CPPFLAGS =  -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
-#LDFLAGS +=  -stdlib=libc++
+#LDFLAGS += -stdlib=libc++
 
-# Libraries
-LDLIBS = -lclientserver -ldatabase
+all: libdatabase.a
 
-# Targets
-PROGS = myserver myclient
+# Create the library; ranlib is for Darwin and maybe other systems.
+# Doesn't seem to do any damage on other systems.
 
-all: $(PROGS)
-
-# Targets rely on implicit rules for compiling and linking
-# The dependency on libclientserver.a is not defined.
-myserver: myserver.o  
-myclient: myclient.o
+libdatabase.a: database.o newsGroup.o
+	ar rv libdatabase.a newsGroup.o database.o
+	ranlib libdatabase.a
 
 # Phony targets
 .PHONY: all clean
 
 # Standard clean
 clean:
-	rm -f *.o $(PROGS)
+	rm -f *.o libdatabase.a
 
 # Generate dependencies in *.d files
 %.d: %.cc
