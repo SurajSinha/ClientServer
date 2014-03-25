@@ -1,14 +1,14 @@
 #ifndef ARTICLE_H__
 #define ARTICLE_H__
-
+#include <string>
 class Article{
 public:
 	size_t id;
-	string title;
-	string contents;
-	string writer;
+	std::string title;
+	std::string contents;
+	std::string writer;
 	size_t newsGroup;
 	Article(){};
-	Article(size_t name, string t): id(name), title(t){};
+	Article(size_t name, std::string t): id(name), title(t){};
 };
 #endif
