@@ -1,31 +1,37 @@
 #ifndef DATABASE_H__
 #define DATABASE_H__
-#include "newsgroup.h"
+#include "newsGroup.h"
 #include "article.h"
-template <typename articleIterator, typename newsGroupIterator>
+#include <memory>
+#include <map>
+#include <string>
+#include <vector>
 class Database {
 	public:
-	typedef articleIterator articleItr;
-	typedef newsGroupIterator newsItr;
+	typedef std::map<size_t, std::shared_ptr<NewsGroup> >::iterator articleItr;
+//	typedef newsGroupIterator newsItr;
 	Database();
 	~Database();
-	void newArticle(shared_ptr<Article> article);
-	void newNewsGroup(shared_ptr<NewsGroup> newsGroup);
-	shared_ptr<Article> getArticle(size_t articleID, size_t newsGroupID);
+	void newArticle(std::shared_ptr<Article> article);
+	size_t newNewsGroup(std::shared_ptr<NewsGroup> newsGroup);
+	std::shared_ptr<Article> getArticle(size_t articleID, size_t newsGroupID);
 	void deleteArticle(size_t articleID, size_t newsGroupID);
-	newsItr newsGroupBegin();
-	newsItr newsGroupEnd();
+
+	articleItr newsGroupBegin();
+	articleItr newsGroupEnd();
+
 	void load();
 	void save();
 	
-	vector<Article> getArticles(size_t n);
+	std::vector<Article> getArticles(size_t n);
 	size_t deleteNewsGroup(size_t newsGroupID);
-	size_t createNewsGroup(size_t newsGroupID, string name);
-	 
+	size_t createNewsGroup(size_t newsGroupID, std::string name);
+	size_t NewsGroupExists = 52;
+	size_t ACK = 28; 
 	private:
 	bool loadswitch = false;
 	size_t nbrOfNewsGroups = 1;
-	map<string, shared_ptr<NewsGroup> > mapName;
-	map<size_t, shared_ptr<NewsGroup> > mapId;
+	std::map<std::string, std::shared_ptr<NewsGroup> > mapName;
+	std::map<size_t, std::shared_ptr<NewsGroup> > mapId;
 };
 #endif
