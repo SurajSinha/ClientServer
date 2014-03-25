@@ -32,6 +32,8 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 	      vector<Newsgroup> ngs(beg,end);
 	      ans.sendListNg(ngs);
 	    }	
+	  }else{
+	    throw ConnectionClosedException(); //We are closing connection.
 	  }
 	  break;
 	case Protocol::COM_CREATE_NG :
@@ -45,7 +47,7 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 	      ans.errorCode=resultCode;
 	    }
 	    ans.sendResponseToCreateNG();
-						
+ 						
 	  }else{
 	    throw ConnectionClosedException(); //We are closing connection.
 	  }
@@ -106,12 +108,25 @@ void connectionHandler(Server& server, database& db,MessageHandler& mh){
 	    ans.sendResponseToDeleteArt();
 	  }else{
 	    throw ConnectionClosedException(); //We are closing connection.
-	  }
+	  } 
 	  break;
 	case Protocol::COM_GET_ART :
-	  ////
+	  int aId,ngId;
+	  if(com.readGetArtCmd(ngId,aId){
+	      <size_t,shared_ptr<Article>> res=db.getArticle(ngId,aId);
+	      if(res.first==Protocol::ANS_ACK){
+		ans.answer=res.first;
+	      }else{
+		ans.answer=Protocol::ANS_NAK;
+		ans.errorCode=res.first;
+	      }
+	      ans.sendResponseToGetArt();
+	    }else{
+	      throw ConnectionClosedException(); //We are closing connection.
+	    }
 	  break;
-	case Protocol::COM_END ://Change it to default?
+	case Protocol::COM_END :
+	  //Change it to default?
 	  throw ConnectionClosedException(); //We are closing connection.
 	  break;
 				

@@ -58,3 +58,18 @@ void Ans::sendResponseToDeleteArt(){
   }
   mh.sendCode(Protocol::ANS_END);
 }
+
+void Ans::sendResponseToGetArt(shared_ptr<Article> ptr){
+  mh.sendCode(Protocol::ANS_GET_ART);
+  mh.sendCode(answer);
+  if(answer==Protocol::ANS_ACK){
+    sendStringParameter(ptr->title);
+    sendStringParameter(ptr->writer);
+    sendStringParameter(ptr->contents);
+  }else{
+    mh.sendCode(errorCode);
+  }
+  mh.sendCode(Protocol::ANS_END);
+
+}
+

@@ -10,10 +10,11 @@
 		void sendResonseToCreateArt();
 		//bool sendListArt(vector<Newsgroup>& ngs);
 		void sendResponseToDeleteArt();
-	
-	private:
-		MessageHandler mh;
+		void sendResponseToGetArt(shared_ptr<Article> ptr);
 		size_t  errorCode;
 		size_t  answer;
+	private:
+		MessageHandler mh;
+		
 	}
 #endif
