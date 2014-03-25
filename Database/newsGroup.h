@@ -5,21 +5,26 @@
 #include <map>
 #include <utility>
 #include "exceptions.h"
+#include "article.h"
 #include <iostream>
-using namespace std;
+#include <memory>
+#include <string>
+#include <vector>
 class NewsGroup{
 public:
+typedef std::map<size_t, std::shared_ptr<Article> >::iterator itr;
 size_t nbrArticles;
 size_t id;
-string name;
+std::string name;
 
 NewsGroup();
-NewsGroup(size_t id, string nm);
+NewsGroup(size_t id, std::string nm);
 void deleteArticle(size_t id);
-shared_prt<Article> getArticle(size_t id);
-auto articleBegin();
-auto articleEnd();
+std::shared_ptr<Article> getArticle(size_t id);
+itr articleBegin();
+itr articleEnd();
+void addArticle(std::shared_ptr<Article> a);
 private:
-map<size_t, shared_ptr<Article> > map;
+std::map<size_t, std::shared_ptr<Article> > map;
 };
 #endif
