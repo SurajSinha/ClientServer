@@ -69,6 +69,35 @@ Database::articleItr Database::newsGroupBegin(){
 Database::articleItr Database::newsGroupEnd(){
 	return mapId.end();
 }
+size_t Database::createArticle(size_t nbr, string title, string author, string text){
+	auto it = mapId.find(nbr);
+	if(it == mapId.end()){
+		return NewsGroupDoesNotExist;
+	}
+	
+	shared_ptr<Article> ptr(new Article);
+	ptr->title = title;
+	ptr->writer = author;
+	ptr->contents = text;
+	ptr->newsGroup = nbr;
+	
+	it->second->addArticle(ptr);
+	return ACK;
+}
+size_t Database::createNG(string name){
+	auto it = mapName.find(name);
+	if(it != mapName.end()){
+		return NewsGroupExists;
+	}
+	size_t id = nbrOfNewsGroups;
+	++nbrOfNewsGroups;
+	shared_ptr<NewsGroup> ptr(new NewsGroup);
+	ptr->name = name;
+	ptr->id=id;
+	mapName.insert(make_pair(name, ptr));
+	mapId.insert(make_pair(id, ptr));
+	return ACK;
+}
 void Database::load(){
 /*	loadswitch = false;
 	ifstream file("awesome.txt");
