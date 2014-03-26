@@ -13,13 +13,14 @@
 #include "database.h"
 using namespace std;
 void connectionHandler(Server& server, Database& db,MessageHandler& mh){
-  Ans ans(mh);
-  Com com(mh);
+
   while(true){
     // Nullptr is returned if new Client wishes to communicate.
     auto conn=server.waitForActivity();
     mh.SetConnection(conn);
-    if(!conn){
+    if(conn!=nullptr){
+      Ans ans(mh);
+      Com com(mh);
       try{
 	// Handle Client Requests.
 	size_t cmd=mh.recieveCode();
@@ -34,9 +35,10 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 		while(beg!=end){
 		  shared_ptr<NewsGroup>ptr= beg->second;
 		  v.push_back(*ptr);
+		  ++beg;
 		}
-		ans.sendListNg(v);
 	      }	
+	      ans.sendListNg(v);
 	    }else{
 	      throw ConnectionClosedException(); //We are closing connection.
 	    }
@@ -46,23 +48,23 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	case Protocol::COM_CREATE_NG :
 	  {
 	    string name;
-	    if(com.readCreateNG(name)){
-	      size_t resultCode=db.createNG(name);
-	      if(resultCode==Protocol::ANS_ACK){
-	    	ans.answer=resultCode;
+	    if(com.readCreateNG(name))
+	      {
+		size_t resultCode=db.createNG(name);
+		if(resultCode==Protocol::ANS_ACK){
+		  ans.answer=resultCode;
+		}else{
+		  ans.answer=Protocol::ANS_NAK;
+		  ans.errorCode=resultCode;
+		}
+		ans.sendResponseToCreateNG();     
 	      }else{
-	    	ans.answer=Protocol::ANS_NAK;
-	    	ans.errorCode=resultCode;
-	      }
-	      ans.sendResponseToCreateNG();
-	      
-	    }else{
-	       throw ConnectionClosedException(); //We are closing connection.
-	     }
+	      throw ConnectionClosedException(); //We are closing connection.
+	    }
 	  }
 	  break;
 	case Protocol::COM_DELETE_NG :
-	  int nbr;
+	  size_t nbr;
 	  if(com.readDeleteNG( nbr)){
 	    size_t resultCode=db.deleteNewsGroup(nbr);
 	    if(resultCode==Protocol::ANS_ACK){
@@ -81,7 +83,7 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	    vector<Article> list;
 	    try{
 	      list=db.getArticles(nbr);
-	       ans.answer=Protocol::ANS_ACK;
+	      ans.answer=Protocol::ANS_ACK;
 	    }catch(NewsGroupNonExistentException e){
 	      ans.answer=Protocol::ANS_NAK;
 	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;		
@@ -98,6 +100,7 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	      size_t res=db.createArticle(nbr,title,author,text);
 	      ans.answer=res;
 	      if(res!=Protocol::ANS_ACK){
+		ans.answer=Protocol::ANS_NAK;
 		ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
 	      }
 	      ans.sendResponseToCreateArt();
@@ -107,14 +110,17 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	  }
 	  break;
 	case Protocol::COM_DELETE_ART :
-	  size_t nbr1,nbr2;
-	  if(com.deleteArtRead(nbr1,nbr2)){
+	  size_t aId,ngId;
+	  if(com.deleteArtRead(ngId,aId)){
 	    try{
-	      db.deleteArticle(nbr1,nbr2);
+	      db.deleteArticle(ngId,aId);
 	      ans.answer=Protocol::ANS_ACK;
-	    }catch (NewsGroupNonExistentException e){
+	    }catch (NewsGroupNonExistentException e1){
 	      ans.answer=Protocol::ANS_NAK;
 	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+	    }catch (ArticleNonExistentException e2){
+	      ans.answer=Protocol::ANS_NAK;
+	      ans.errorCode=Protocol::ERR_ART_DOES_NOT_EXIST;
 	    }
 	    ans.sendResponseToDeleteArt();
 	  }else{
@@ -122,33 +128,30 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	  } 
 	  break;
 	case Protocol::COM_GET_ART :
-	  int aId,ngId;
+	  // int aId,ngId;
 	  if(com.readGetArtCmd(ngId,aId)){
-			shared_ptr<Article> res;
-			try{
-	      		res=db.getArticle(ngId,aId);
-				ans.answer=Protocol::ANS_ACK;
-			}catch(ArticleNonExistentException e1){
-				ans.errorCode=Protocol::ERR_ART_DOES_NOT_EXIST;
-				ans.answer=Protocol::ANS_NAK;
-			}catch(NewsGroupNonExistentException e2){
-				ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
-				ans.answer=Protocol::ANS_NAK;
-			}		
-	      ans.sendResponseToGetArt(res);
-	    }else{
-	      throw ConnectionClosedException(); //We are closing connection.
-	    }
-	    break;
-	
-	case Protocol::COM_END :
-	  //Change it to default?
-	  throw ConnectionClosedException(); //We are closing connection.
+	    shared_ptr<Article> res;
+	    try{
+	      res=db.getArticle(aId,ngId);
+	      ans.answer=Protocol::ANS_ACK;
+	    }catch(ArticleNonExistentException e1){
+	      ans.errorCode=Protocol::ERR_ART_DOES_NOT_EXIST;
+	      ans.answer=Protocol::ANS_NAK;
+	    }catch(NewsGroupNonExistentException e2){
+	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+	      ans.answer=Protocol::ANS_NAK;
+	    }		
+	    ans.sendResponseToGetArt(res);
+	  }else{
+	    throw ConnectionClosedException(); //We are closing connection.
+	  }
 	  break;
-				
-	}
-				
-	 		
+	
+	case Protocol::COM_END:
+	default:
+	  throw ConnectionClosedException(); //We are closing connection.
+	  break;	
+	}		
       }catch(ConnectionClosedException& e){
 	server.deregisterConnection(conn);
 	cout<<"Client closed Connection"<<endl;
@@ -184,18 +187,18 @@ int main(int argc, char* argv[]){
   */
   Server server(port);
   if(!server.isReady()){
-      cerr<<"Server initialization Error."<<endl;
-      exit(1);
-    }
+    cerr<<"Server initialization Error."<<endl;
+    exit(1);
+  }
   //Handles connections with the Client.
   Database db;
   MessageHandler handler;
 
-   connectionHandler(server,db,handler);
+  connectionHandler(server,db,handler);
   // Kommer att göra om denna metod till en 
   //template metod för att hantera db på HDD. 
 	
 	
-    }
+}
  
  

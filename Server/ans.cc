@@ -41,8 +41,8 @@ void Ans::sendResponseToListArt(vector<Article>& art){
       mh.sendNumParameter(art[i].id);
       mh.sendStringParameter(art[i].title);
     }	
-    mh.sendCode(Protocol::ANS_END);
   }
+  mh.sendCode(Protocol::ANS_END);
 }
 void Ans::sendResponseToCreateArt(){
   mh.sendCode(Protocol::ANS_CREATE_ART);

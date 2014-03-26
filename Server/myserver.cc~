@@ -13,51 +13,79 @@
 #include "database.h"
 using namespace std;
 void connectionHandler(Server& server, Database& db,MessageHandler& mh){
-  Ans ans(mh);
-  Com com(mh);
+
   while(true){
     // Nullptr is returned if new Client wishes to communicate.
     auto conn=server.waitForActivity();
+    cout<<"checkpoint 0"<<endl;
     mh.SetConnection(conn);
-    if(!conn){
+    if(conn!=nullptr){
+      Ans ans(mh);
+      Com com(mh);
       try{
+	cout<<"checkpoint 1"<<endl;
 	// Handle Client Requests.
 	size_t cmd=mh.recieveCode();
+	cout<<"Command:"<<cmd<<endl;
 	switch(cmd){
 	case Protocol::COM_LIST_NG :
-	  if(com.comListNGRead()){
-	  	auto beg=db.newsGroupBegin();
-		auto end=db.newsGroupEnd();
-	    if(beg!=end){
-	   	while(beg!=end){
-					
+	  {
+	    cout<<" LIST ART"<<endl;
+	    if(com.comListNGRead()){
+	      cout<<"checkpoint LIST2"<<endl;
+	      auto beg=db.newsGroupBegin();
+	      cout<<"checkpoint LIST3"<<endl;
+	      auto end=db.newsGroupEnd();
+	      cout<<"checkpoint LIST4"<<endl;
+	      vector <NewsGroup> v;
+	      cout<<"checkpoint Vec4"<<endl;
+	      if(beg!=end){
+		cout<<"checkpoint begend4"<<endl;
+		while(beg!=end){
+		  cout<<"checkpoint vectre4"<<endl;
+		  shared_ptr<NewsGroup>ptr= beg->second;
+		  v.push_back(*ptr);
+		  ++beg;
 		}
-	   //   ans.sendListNg(ngs);
-	    }	
-	  }else{
-	    throw ConnectionClosedException(); //We are closing connection.
+		cout<<"checkpoint LIST5"<<endl;
+		
+		
+		cout<<"checkpoint LIST6"<<endl;
+	      }	
+	      ans.sendListNg(v);
+	    }else{
+	      throw ConnectionClosedException(); //We are closing connection.
+	    }
 	  }
 	  break;
-	  /*
+	  
 	case Protocol::COM_CREATE_NG :
-	  string name;
-	  if(com.readCreateNG(name)){
-	    size_t resultCode=db.createNG(name);
-	    if(resultCode==Protocol::ANS_ACK){
-	      ans.answer=resultCode;
-	    }else{
-	      ans.answer=Protocol::ANS_NAK;
-	      ans.errorCode=resultCode;
+	  {
+	    cout<<"checkpoint CREATENG"<<endl;
+	    string name;
+	    //cout<<"checkpoint asd"<<com.readCreateNG(name)<<endl;
+	    if(com.readCreateNG(name))
+	      {
+		cout<<"checkpoint 3"<<endl;
+		size_t resultCode=db.createNG(name);
+		cout<<"checkpoint 4"<<name<<endl;
+		if(resultCode==Protocol::ANS_ACK){
+		  ans.answer=resultCode;
+		}else{
+		  ans.answer=Protocol::ANS_NAK;
+		  ans.errorCode=resultCode;
+		}
+		ans.sendResponseToCreateNG();
+		cout<<"checkpoint 5"<<endl;
+	      
+	      }else{
+	      throw ConnectionClosedException(); //We are closing connection.
 	    }
-	    ans.sendResponseToCreateNG();
- 						
-	  }else{
-	    throw ConnectionClosedException(); //We are closing connection.
 	  }
 	  break;
 	case Protocol::COM_DELETE_NG :
-	  int nbr;
-	  if(com.readDeleteNG(int nbr)){
+	  size_t nbr;
+	  if(com.readDeleteNG( nbr)){
 	    size_t resultCode=db.deleteNewsGroup(nbr);
 	    if(resultCode==Protocol::ANS_ACK){
 	      ans.answer=resultCode;
@@ -71,42 +99,56 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	  }
 	  break;
 	case Protocol::COM_LIST_ART :
-	  int nbr;
+	  cout<<"List ART"<<endl;
 	  if(com.readListArtCmd(nbr)){
-	    vector<Article> list=db.getArticles(nbr);
-	    if(list){//db returns null if NG doesn't exist.
+	    cout<<nbr<<" List"<<endl;
+	    vector<Article> list;
+	    try{
+	      cout<<nbr<<"DatabaseTest"<<endl;
+	      list=db.getArticles(nbr);
+	      cout<<nbr<<"DatabaseTestDone"<<endl;
 	      ans.answer=Protocol::ANS_ACK;
-	    }else{
+	    }catch(NewsGroupNonExistentException e){
+	      cout<<nbr<<"NewsGroupNonExistentException"<<endl;
 	      ans.answer=Protocol::ANS_NAK;
-	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;		
 	    }
+	    cout<<nbr<<"Send Error"<<endl;
 	    ans.sendResponseToListArt(list);
 	  }else{
 	    throw ConnectionClosedException(); //We are closing connection.
 	  }
 	  break;
 	case Protocol::COM_CREATE_ART :
-	  int nbr;//int?
-	  string title,author,text;
-	  if(com.createArtRead(nbr,title,author,text)){
-	    size_t res=db.createArticle(nbr,title,author,text);
-	    ans.answer=res;
-	    if(res!=Protocol::ANS_ACK){
-	      ans.errorCode=Protocol::Err_NG_DOES_NOT_EXIST;
+	  {
+	    string title,author,text;
+	    cout<<nbr<<" Test CREATE ART"<<endl;
+	    if(com.createArtRead(nbr,title,author,text)){
+	      size_t res=db.createArticle(nbr,title,author,text);
+	         cout<<nbr<<" DataWorks"<<endl;
+	      ans.answer=res;
+	      if(res!=Protocol::ANS_ACK){
+		ans.answer=Protocol::ANS_NAK;
+		ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+	      }
+	      ans.sendResponseToCreateArt();
+	    }else{
+	      throw ConnectionClosedException(); //We are closing connection.
 	    }
-	    ans.sendResponseToCreateArt();
-	  }else{
-	    throw ConnectionClosedException(); //We are closing connection.
 	  }
 	  break;
 	case Protocol::COM_DELETE_ART :
-	  int nbr1,nbr2;
-	  if(com.deleteArtRead(nbr1,nbr2)){
-	    size_t res=db.deleteArticle(nbr1,nbr2);
-	    ans.answer=res;
-	    if(res!=Protocol::ANS_ACK){
-	      ans.errorCode=ans.answer;
+	  size_t aId,ngId;
+	  if(com.deleteArtRead(ngId,aId)){
+	    try{
+	      db.deleteArticle(ngId,aId);
+	      ans.answer=Protocol::ANS_ACK;
+	    }catch (NewsGroupNonExistentException e1){
 	      ans.answer=Protocol::ANS_NAK;
+	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+	    }catch (ArticleNonExistentException e2){
+	      ans.answer=Protocol::ANS_NAK;
+	      ans.errorCode=Protocol::ERR_ART_DOES_NOT_EXIST;
 	    }
 	    ans.sendResponseToDeleteArt();
 	  }else{
@@ -114,25 +156,26 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	  } 
 	  break;
 	case Protocol::COM_GET_ART :
-	  int aId,ngId;
-	  if(com.readGetArtCmd(ngId,aId){
-			shared_ptr<Article> res;
-			try{
-	      		res=db.getArticle(ngId,aId);
-				ans.answer=Protocol::ANS_ACK;
-			}catch(ArticleNonExistentException e1){
-				ans.errorCode=Protocol::ERR_ART_DOES_NOT_EXIST;
-				ans.answer=Protocol::ANS_NAK;
-			}catch(NewsGroupNonExistentException e2){
-				ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
-				ans.answer=Protocol::ANS_NAK;
-			}		
-	      ans.sendResponseToGetArt(res);
-	    }else{
-	      throw ConnectionClosedException(); //We are closing connection.
-	    }
-	    break;
-	*/
+	  // int aId,ngId;
+	  if(com.readGetArtCmd(ngId,aId)){
+	    shared_ptr<Article> res;
+	    try{
+	      cout<<"checkpoint GET "<<ngId<<","<<aId<<endl;
+	      res=db.getArticle(aId,ngId);
+	      ans.answer=Protocol::ANS_ACK;
+	    }catch(ArticleNonExistentException e1){
+	      ans.errorCode=Protocol::ERR_ART_DOES_NOT_EXIST;
+	      ans.answer=Protocol::ANS_NAK;
+	    }catch(NewsGroupNonExistentException e2){
+	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
+	      ans.answer=Protocol::ANS_NAK;
+	    }		
+	    ans.sendResponseToGetArt(res);
+	  }else{
+	    throw ConnectionClosedException(); //We are closing connection.
+	  }
+	  break;
+	
 	case Protocol::COM_END :
 	  //Change it to default?
 	  throw ConnectionClosedException(); //We are closing connection.
@@ -176,18 +219,18 @@ int main(int argc, char* argv[]){
   */
   Server server(port);
   if(!server.isReady()){
-      cerr<<"Server initialization Error."<<endl;
-      exit(1);
-    }
+    cerr<<"Server initialization Error."<<endl;
+    exit(1);
+  }
   //Handles connections with the Client.
   Database db;
   MessageHandler handler;
 
-   connectionHandler(server,db,handler);
+  connectionHandler(server,db,handler);
   // Kommer att göra om denna metod till en 
   //template metod för att hantera db på HDD. 
 	
 	
-    }
+}
  
  
