@@ -31,6 +31,7 @@ class Database {
 	size_t NewsGroupExists = 52;
 	size_t ACK = 28; 
 	private:
+	size_t lastId;
 	bool loadswitch = false;
 	size_t nbrOfNewsGroups = 1;
 	std::map<std::string, std::shared_ptr<NewsGroup> > mapName;
