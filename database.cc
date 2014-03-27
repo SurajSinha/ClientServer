@@ -99,45 +99,81 @@ size_t Database::createNG(string name){
 	return ACK;
 }
 void Database::load(){
-/*	loadswitch = false;
+/*	/* format:
+			
+			lastid \n
+			ngname \n
+			ngid numarticles \n
+			article1_name \n
+			article1_id article1_textsize \n
+			text[article1_textsize]
+			article2_name \n
+			article2_id  article2_textsize \n
+			text[article2_textsize]
+	*/
+
+
 	ifstream file("awesome.txt");
-	string s;
-	string n;
-	if(file.is_open()){
-		while(file >> s && !loadswitch){
-			if(s=="###Switch### "){
-				loadswitch = true;
-			}else{
-				file>>n;
-				
-				shared_ptr<NewsGroup> ptr(n);
-				mapName.insert(make_pair(s, ptr));
-			}
+
+	
+	file>>lastId;
+
+	while(file)
+	{		
+		int ngid;
+		string ngname;
+		int nArt;
+
+		getline(file,ngname);
+		file>>ngid;		
+		file>>nArt;
+
+		NewsGroup* ng=new NewsGroup(ngid,ngname);
+
+		for(size_t i=0;i<nArt;i++)
+		{
+			int artId;
+			string artName;
+			int len;
+			
+			getline(file,ngname);
+			file>>artId;			
+			file>>len;
+
+			char* str=new char[len];
+			file.get(str,len);
+			string text(str);
+			delete str;
+
+			auto a=make_shared<Article>();
+			a->id=artId;
+			a->title=artName;
+			a->contents=text;
+			ng->addArticle(a);
 		}
-		while(file >> s){
-			file>>n;
-			shared_ptr<NewsGroup> ptr(n);
-			istringstream f(s);
-			size_t num;
-			f>>num;
-			mapId.insert(make_pair(num, ptr));
-		}
+
+		shared_ptr<NewsGroup> sng(ng);
+		mapId[ng->id]=sng;
+		mapName[ng->name]=sng;
 	}
-*/
 }
 void Database::save(){
-ofstream file;
-file.open("awesome.txt");
-auto it = mapName.begin();
-while(it!=mapName.end()){
-	file<<it->first<<" "<<it->second<< " ";
-	++it;
+	ofstream file("awesome.txt");
+	if(!file)return;
+
+	file<<lastId<<endl;
+	for(auto ngp:mapId)
+	{
+		auto ng=ngp->second;
+		file << ng->name <<endl 
+		     << ng->id << " " << ng->nbrArticles << endl;
+		
+		auto end=ng->articleEnd();
+		for(auto it=ng->articleBegin();it!=end;++it)
+		{
+			file<<it->second->title<<endl
+				<<it->second->id<<" "<<it->second->contents.size()<<endl
+				<<text<<endl;
+		}
 	}
-file<<"###Switch### ";
-auto it2 = mapId.begin();
-while(it2!=mapId.end()){
-	file<<it2->first<<" "<<it2->second<<" ";
-	++it2;
-	}
-file.close();
 }
