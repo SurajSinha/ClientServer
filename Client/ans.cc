@@ -11,23 +11,42 @@ vector<NewsGroup> Ans::readAnsListNG(){
       string title=mh.recieveStringParameter();
       v.push_back(NewsGroup(id,title));
     }
+    mg.recieveCode();
     return v;
   }else{
     throw ProtocolViolationException();//Ska också client göra detta?
   }
 }
 
-string Ans::readAnsCreateNG(){
+bool Ans::readAnsCreateNG(){
   if(mh.recieveCode()==Protocol::ANS_CREATE_NG){
     size_t answer=mg.recieveCode();
     if(answer==Protocol::ANS_NAK){
       size_t errorCode=mg.recieveCode();
-      string str=to_string(errorCode);
-      return str;
+       mg.recieveCode();
+      return false;
     }else{
-      return to_string(answer);
+      mg.recieveCode();
+      return true;
     }
   }else{
     throw ProtocolViolationException();
   }
 }
+
+bool Ans::readAnsDeleteNG(){
+  if(mh.recieveCode()==Protocol::ANS_DELETE_NG){
+    size_t answer=mg.recieveCode();
+    if(answer==Protocol::ANS_NAK){
+      size_t errorCode=mg.recieveCode();
+      mg.recieveCode();
+      return false;
+    }else{
+      mg.recieveCode();
+      return true;
+    }
+  }else{
+    throw ProtocolViolationException();
+  }
+}
+

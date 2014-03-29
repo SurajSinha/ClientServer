@@ -8,7 +8,9 @@ class Ans{
  public:
  Ans(MessageHandler& m):mh(m){}
  std::vector<NewsGroup> readAnsListNG();
- std::string readAnsCreateNG();
+ bool readAnsCreateNG();
+ bool readAnsDeleteNG();
+
  private:
   MessageHandler mh;
 };
