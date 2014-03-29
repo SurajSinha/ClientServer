@@ -16,3 +16,18 @@ vector<NewsGroup> Ans::readAnsListNG(){
     throw ProtocolViolationException();//Ska också client göra detta?
   }
 }
+
+string Ans::readAnsCreateNG(){
+  if(mh.recieveCode()==Protocol::ANS_CREATE_NG){
+    size_t answer=mg.recieveCode();
+    if(answer==Protocol::ANS_NAK){
+      size_t errorCode=mg.recieveCode();
+      string str=to_string(errorCode);
+      return str;
+    }else{
+      return to_string(answer);
+    }
+  }else{
+    throw ProtocolViolationException();
+  }
+}
