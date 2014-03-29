@@ -10,7 +10,7 @@ class Ans{
  std::vector<NewsGroup> readAnsListNG();
  bool readAnsCreateNG();
  bool readAnsDeleteNG();
- std:: vector<Article> readAnsListArt();
+std:: vector<Article> readAnsListArt();
  private:
   MessageHandler mh;
 };
