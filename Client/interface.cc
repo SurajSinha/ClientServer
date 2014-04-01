@@ -1,9 +1,20 @@
 #include <iostream>
 #include <string>
+#include "com.h"
+#include "ans.h"
+#include "newsGroup.h"
+#include "article.h"
+#include <vector>
 using namespace std;
+Com c;
+Ans a;
+interface(Com& c, Ans& a){
+	this.c=c;
+	this.a=a;
+}
 
 int main(){	
-
+  
   cout << "Welcome to our news system. Type the following in order to execute certain desired tasks:" << endl;
 
   while(true){
@@ -29,8 +40,12 @@ int main(){
     if(in=="1"){
 
       cout<<"The newsgroups are the following:"<<endl;
-
-      //TODO
+      c.sendListNG();
+      vector<newsGroup> g = a.readAnsListNG();
+      for(newsGroup& n: g){
+      	cout << n.name<<endl;
+      }
+      //DONE
 
     }else if(in=="2"){
 
@@ -39,27 +54,42 @@ int main(){
       string name;
 
       cin>>name;
-
-      //TODO
+      c.sendCreateNG(name);
+      bool done = readAnsCreateNG();
+      if(done){
+      	cout<<"Newsgroup "<< name <<" created"<<endl;;
+      }else{
+      	cout<<"Creation failed"<<endl;
+      }
+      //DONE
 
     }else if(in=="3"){
 
       cout<<"Type in the number for the newsgroup that shall be deleted:"<<endl;
 
-      string number;
+      size_t number;
 
       cin>>number;
-
-      //TODO
+      c.sendDeleteNG(number);
+      a.readAnsDeleteNG();
+        if(done){
+      	cout<<"Newsgroup "<< number <<" deleted"<<endl;
+      }else{
+      	cout<<"Deletion failed"<<endl;
+      }
+      //DONE
 
     }else if(in=="4"){
 
       cout<<"Type in the number for the newsgroup:"<<endl;
 
-      string number;
-
+      size_t number;
       cin>>number;
-
+      c.sendListArt(number);
+      vector<Article> g= a.readAnsListArt();
+      for(Article& a: g){
+      	cout<<g.title<<endl;
+      }
       //TODO
 
     }else if(in=="5"){
