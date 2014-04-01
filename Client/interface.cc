@@ -90,7 +90,7 @@ int main(){
       for(Article& a: g){
       	cout<<g.title<<endl;
       }
-      //TODO
+      //DONE
 
     }else if(in=="5"){
 
