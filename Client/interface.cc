@@ -5,15 +5,11 @@
 #include "newsGroup.h"
 #include "article.h"
 #include <vector>
+#include "interface.h"
 using namespace std;
-Com c;
-Ans a;
-interface(Com& c, Ans& a){
-	this.c=c;
-	this.a=a;
-}
 
-int main(){	
+
+int interface::main(){	
   
   cout << "Welcome to our news system. Type the following in order to execute certain desired tasks:" << endl;
 
@@ -41,8 +37,8 @@ int main(){
 
       cout<<"The newsgroups are the following:"<<endl;
       c.sendListNG();
-      vector<newsGroup> g = a.readAnsListNG();
-      for(newsGroup& n: g){
+      vector<NewsGroup> g = a.readAnsListNG();
+      for(NewsGroup& n: g){
       	cout << n.name<<endl;
       }
       //DONE
@@ -55,7 +51,7 @@ int main(){
 
       cin>>name;
       c.sendCreateNG(name);
-      bool done = readAnsCreateNG();
+      bool done = a.readAnsCreateNG();
       if(done){
       	cout<<"Newsgroup "<< name <<" created"<<endl;;
       }else{
@@ -71,8 +67,8 @@ int main(){
 
       cin>>number;
       c.sendDeleteNG(number);
-      a.readAnsDeleteNG();
-        if(done){
+      bool done = a.readAnsDeleteNG();
+      if(done){
       	cout<<"Newsgroup "<< number <<" deleted"<<endl;
       }else{
       	cout<<"Deletion failed"<<endl;
@@ -88,7 +84,7 @@ int main(){
       c.sendListArt(number);
       vector<Article> g= a.readAnsListArt();
       for(Article& a: g){
-      	cout<<g.title<<endl;
+      	cout<<a.title<<endl;
       }
       //DONE
 
@@ -153,5 +149,4 @@ int main(){
     }
 
   }
-
 }
