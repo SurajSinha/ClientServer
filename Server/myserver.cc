@@ -14,6 +14,8 @@
 using namespace std;
 void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 
+	const bool save=!false;
+	if(save)db.load();
   while(true){
     // Nullptr is returned if new Client wishes to communicate.
     auto conn=server.waitForActivity();
@@ -53,6 +55,7 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 		size_t resultCode=db.createNG(name);
 		if(resultCode==Protocol::ANS_ACK){
 		  ans.answer=resultCode;
+		  db.save();
 		}else{
 		  ans.answer=Protocol::ANS_NAK;
 		  ans.errorCode=resultCode;
@@ -69,6 +72,7 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	    size_t resultCode=db.deleteNewsGroup(nbr);
 	    if(resultCode==Protocol::ANS_ACK){
 	      ans.answer=resultCode;
+		  if(save)db.save();
 	    }else{
 	      ans.answer=Protocol::ANS_NAK;
 	      ans.errorCode=resultCode;
@@ -102,7 +106,10 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	      if(res!=Protocol::ANS_ACK){
 		ans.answer=Protocol::ANS_NAK;
 		ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
-	      }
+	      }else 
+			{
+			if(save) db.save();
+			}
 	      ans.sendResponseToCreateArt();
 	    }else{
 	      throw ConnectionClosedException(); //We are closing connection.
@@ -115,6 +122,7 @@ void connectionHandler(Server& server, Database& db,MessageHandler& mh){
 	    try{
 	      db.deleteArticle(ngId,aId);
 	      ans.answer=Protocol::ANS_ACK;
+		  if(save)db.save();
 	    }catch (NewsGroupNonExistentException e1){
 	      ans.answer=Protocol::ANS_NAK;
 	      ans.errorCode=Protocol::ERR_NG_DOES_NOT_EXIST;
