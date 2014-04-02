@@ -27,7 +27,7 @@ all: $(PROGS)
 # Targets rely on implicit rules for compiling and linking
 # The dependency on libclientserver.a is not defined.
 myserver: myclient.o com.o
-interface: interface.o
+interface: interface.o com.o ans.o
 
 # Phony targets
 .PHONY: all clean

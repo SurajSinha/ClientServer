@@ -11,6 +11,9 @@ class Ans{
  bool readAnsCreateNG();
  bool readAnsDeleteNG();
  std:: vector<Article> readAnsListArt();
+ bool readCreateArt();
+ size_t readDeleteArt();
+ Article readGetArt();
  private:
   MessageHandler mh;
 };

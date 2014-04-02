@@ -53,20 +53,22 @@ bool Ans::readAnsDeleteNG(){
 vector<Article> Ans::readAnsListArt(){
   if(mh.recieveCode()==Protocol::ANS_LIST_ART){
     size_t answer=mh.recieveCode();
+    vector<Article> v;
     if(answer==Protocol::ANS_ACK){
       int nbrOfItems=mh.recieveIntParameter();
-      vector<Article> v;
+     
       for(int i = 0; i!= nbrOfItems; ++i){
 	int id=mh.recieveIntParameter();
 	string title=mh.recieveStringParameter();
-	v.push_back(Article(id,title);
+	v.push_back(Article(id,title));
       }
 	  mh.recieveCode();
 	  return v;
     }else{
-	size_t errorCode=mh.reciveCode();
+      size_t errorCode=mh.recieveCode();
 	mh.recieveCode();
-	return nullptr;
+	
+	return  v;
     }
   }else{
     throw ProtocolViolationException();
