@@ -76,16 +76,21 @@ int main(int argc, char* argv[]) {
 
       string name;
       getline(cin,name);
-	  name = customTrim(name, " ");
+      name = customTrim(name, " ");
+   
    // Man ska inte kunna skapa en newsgrop med whitespace som namn.
     // namn måste innehålla minst en char.
+      if(name.length()==0){
+      	cout<<"Invalid name"<<endl;
       
-      c.sendCreateNG(name);
-      bool done = a.readAnsCreateNG();
-      if(done){
-      	cout<<"Newsgroup "<< name <<" created"<<endl;;
       }else{
-      	cout<<"NewsGroup with name "<<name<<" already exists in the current database."<<endl;
+      	c.sendCreateNG(name);
+      	bool done = a.readAnsCreateNG();
+      	if(done){
+      		cout<<"Newsgroup "<< name <<" created"<<endl;;
+      	}else{
+      		cout<<"NewsGroup with name "<<name<<" already exists in the current database."<<endl;
+      	}
       }
       //DONE
 
