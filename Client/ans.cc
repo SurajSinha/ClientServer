@@ -74,3 +74,45 @@ vector<Article> Ans::readAnsListArt(){
     throw ProtocolViolationException();
   }
 }
+
+bool Ans::readCreateArt(){
+  if(mh.recieveCode()==Protocol::ANS_CREATE_ART){
+    size_t answer = mh.recieveCode();
+    mh.recieveCode();//Recieve ANS_END
+    return answer == Protocol::ANS_ACK;
+  }else{
+    throw ProtocolViolationException();
+  }
+}
+
+size_t Ans::readDeleteArt(){
+  if(mh.recieveCode()==Protocol::ANS_DELETE_ART){
+    size_t answer = mh.recieveCode();
+    mh.recieveCode();//Recieve ANS_END
+    return answer;
+  }else{
+    throw ProtocolViolationException();
+  }
+}/*
+pair<size_t,shared_ptr<Article>> Ans::readGetArt(){
+   if(mh.recieveCode()==Protocol::ANS_GET_ART){
+    size_t answer = mh.recieveCode();
+    if(answer == Protocol::ANS_ACK){
+      string title = mh.recieveStringParameter();
+      string author = mh.recieveStringParameter();
+      string text = mh.recieveStringParameter();
+      shared_ptr<Article> art=make_shared<Article>(title,author,text);
+      return make_pair(answer,art);
+    }else{
+      shared_ptr<Article> art;
+      return make_pair(answer,art);
+    }
+  }else{
+    throw ProtocolViolationException();
+  }
+
+
+
+
+}
+ */

@@ -3,7 +3,9 @@
 #include <string>
 #include "handler.h"
 #include <vector>
+#include "article.h"
 #include "newsGroup.h"
+#include <memory>
 class Ans{
  public:
  Ans(MessageHandler& m):mh(m){}
@@ -13,7 +15,8 @@ class Ans{
  std:: vector<Article> readAnsListArt();
  bool readCreateArt();
  size_t readDeleteArt();
- Article readGetArt();
+ 
+ // std::pair<size_t,std::shared_ptr<Article>> readGetArt();
  private:
   MessageHandler mh;
 };
