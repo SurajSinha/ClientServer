@@ -9,7 +9,11 @@
 #include <algorithm>
 using namespace std;
 
-
+string customTrim(const string& str, const string& remove){
+	auto start = str.find_first_not_of(remove);
+	auto end = str.find_last_not_of(remove);
+	return str.substr(start, end);
+}
 int main(int argc, char* argv[]) {
   if (argc != 3) {
     cerr << "Usage: myclient host-name port-number" << endl;
@@ -72,6 +76,7 @@ int main(int argc, char* argv[]) {
 
       string name;
       getline(cin,name);
+	  name = customTrim(name, " ");
    // Man ska inte kunna skapa en newsgrop med whitespace som namn.
     // namn måste innehålla minst en char.
       
