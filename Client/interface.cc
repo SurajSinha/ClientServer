@@ -6,11 +6,34 @@
 #include "article.h"
 #include <vector>
 #include "interface.h"
+#include <algorithm>
 using namespace std;
 
 
-int interface::main(){	
+int main(int argc, char* argv[]) {
+  if (argc != 3) {
+    cerr << "Usage: myclient host-name port-number" << endl;
+    exit(1);
+  }
   
+  int port = -1;
+  try {
+    port = stoi(argv[2]);
+  } catch (exception& e) {
+    cerr << "Wrong port number. " << e.what() << endl;
+    exit(1);
+  }
+  shared_ptr<Connection> conn = make_shared<Connection>(argv[1],port);
+  if (!conn->isConnected()) {
+    cerr << "Connection attempt failed" << endl;
+    exit(1);
+  }
+
+  cout << "Connected to Server ";
+  MessageHandler mh;
+  mh.SetConnection(conn);	
+  Com c(mh);
+  Ans a(mh); 
   cout << "Welcome to our news system. Type the following in order to execute certain desired tasks:" << endl;
 
   while(true){
@@ -32,7 +55,7 @@ int interface::main(){
     string in;
 
     cin>>in;
-
+    cin.ignore();
     if(in=="1"){
 
       cout<<"The newsgroups are the following:"<<endl;
@@ -48,14 +71,16 @@ int interface::main(){
       cout<<"Type in the desired name for the newsgroup:"<<endl;
 
       string name;
-
-      cin>>name;
+      getline(cin,name);
+   // Man ska inte kunna skapa en newsgrop med whitespace som namn.
+    // namn måste innehålla minst en char.
+      
       c.sendCreateNG(name);
       bool done = a.readAnsCreateNG();
       if(done){
       	cout<<"Newsgroup "<< name <<" created"<<endl;;
       }else{
-      	cout<<"Creation failed"<<endl;
+      	cout<<"NewsGroup with name "<<name<<" already exists in the current database."<<endl;
       }
       //DONE
 

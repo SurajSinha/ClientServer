@@ -3,7 +3,8 @@
 using namespace std;
 
 
-bool Com::comListNGRead(){
+bool Com::ListNGRead(){
+
 	return mh.recieveCode()==Protocol::COM_END;
 	
 }

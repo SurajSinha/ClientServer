@@ -5,7 +5,7 @@
 	class Com{
 	public:
 		Com(MessageHandler &m):mh(m){}
-		bool comListNGRead();
+		bool ListNGRead();
 		bool readCreateNG(std::string& str);
 		bool readDeleteNG(size_t& nbr);
 		bool readListArtCmd(size_t& nbr);
