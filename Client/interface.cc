@@ -8,11 +8,7 @@
 #include "interface.h"
 #include <algorithm>
 using namespace std;
-string customTrim(const string& str, const string& remove){
-  auto start = str.find_first_not_of(remove);
-  auto end = str.find_last_not_of(remove);
-  return str.substr(start, end);
-}
+
 int validInput()
 {
     int x;
@@ -25,6 +21,11 @@ int validInput()
         std::cin >> x;
     }
     return x;
+
+string customTrim(const string& str, const string& remove){
+	auto start = str.find_first_not_of(remove);
+	auto end = str.find_last_not_of(remove);
+	return str.substr(start, end);
 }
 int main(int argc, char* argv[]) {
   if (argc != 3) {
@@ -90,15 +91,32 @@ int main(int argc, char* argv[]) {
       std::cin.ignore();
       getline(cin,name);
       name = customTrim(name, " ");
+<<<<<<< HEAD
+=======
+   
+>>>>>>> e4d42ce42484dbc3dbf5e78bdba3001f2d58976a
    // Man ska inte kunna skapa en newsgrop med whitespace som namn.
     // namn måste innehålla minst en char.
+      if(name.length()==0){
+      	cout<<"Invalid name"<<endl;
       
+<<<<<<< HEAD
       c.sendCreateNG(name);
       bool done = a.readAnsCreateNG();
       if(done){
         cout<<"Newsgroup "<< name <<" created"<<endl;;
       }else{
         cout<<"NewsGroup with name "<<name<<" already exists in the current database."<<endl;
+=======
+      }else{
+      	c.sendCreateNG(name);
+      	bool done = a.readAnsCreateNG();
+      	if(done){
+      		cout<<"Newsgroup "<< name <<" created"<<endl;;
+      	}else{
+      		cout<<"NewsGroup with name "<<name<<" already exists in the current database."<<endl;
+      	}
+>>>>>>> e4d42ce42484dbc3dbf5e78bdba3001f2d58976a
       }
       //DONE
 
