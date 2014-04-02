@@ -137,35 +137,64 @@ int main(int argc, char* argv[]) {
 
       }
 
-      //TODO
+/*
+		c.sendCreateArt(0,name,author,text)
+		if(a.readCreateArt())	{
+			cout<<"Article "<< name <<" created"<<endl;;
+      	}else{
+	      	cout<<"Creation failed"<<endl;
+		}
+*/
 
     }else if(in=="6"){
 
       cout<<"Type in the article number and the newsgroup number for the article that shall 			be deleted:"<<endl;
 
-      string numberArticle;
+      size_t numberArticle;
 
       cin>>numberArticle;
 
-      string numberNG;
+      size_t numberNG;
 
       cin>>numberNG;
 
-      //TODO
+	/*  c.sendDeleteArt(numberNG,numberArticle);
+	  auto res=a.readDeleteArt();
+	  if(res==ASD)
+	  {
+	 	 cout<<"Error?"
+	  }
+	  else 
+	  {
+		cout<<"Article deleted"<<endl;
+	  }*/
+ 
 
     }else if(in=="7"){
 
       cout<<"Type in the article number and the newsgroup number for the article that shall 			be retrieved:"<<endl;
 
-      string numberArticle;
+      size_t numberArticle;
 
       cin>>numberArticle;
 
-      string numberNG;
+      size_t numberNG;
 
       cin>>numberNG;
 
-      //TODO
+/*
+	 c.sendGetArt(numberNG, size_t numberArticle);   
+
+		 try{
+			Article art = a.readGetArt();
+			cout<<"name:"<<art.title<<endl
+ 				<<"author:"<<art.writer<<endl
+				<<contents<<endl;
+	 	 }   
+		 catch(WorldOnFireException eh)
+		{
+		}
+*/
 
     }else{
 

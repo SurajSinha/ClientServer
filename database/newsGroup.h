@@ -24,6 +24,7 @@ std::shared_ptr<Article> getArticle(size_t id);
 itr articleBegin();
 itr articleEnd();
 void addArticle(std::shared_ptr<Article> a);
+size_t getSize(){return map.size();}
 private:
 std::map<size_t, std::shared_ptr<Article> > map;
 };

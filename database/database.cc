@@ -98,46 +98,101 @@ size_t Database::createNG(string name){
 	mapId.insert(make_pair(id, ptr));
 	return ACK;
 }
+
+
+
+int readInt(ifstream& file)
+{
+	int v;
+	file>>v;
+	return v;
+}
+string readStr(ifstream& file)
+{
+	int s=readInt(file);	
+	char* str=new char[s+1];	
+	file.ignore(1);
+	file.get(str,s+1,0);
+	string text(str);
+	return text;
+}
+void saveInt(ofstream& file,int v)
+{
+	file<<v<<" ";
+}
+void saveStr(ofstream& file,string &str)
+{
+	saveInt(file,str.size());
+	file<<str<<" ";
+}
+
+
 void Database::load(){
-/*	loadswitch = false;
-	ifstream file("awesome.txt");
-	string s;
-	string n;
-	if(file.is_open()){
-		while(file >> s && !loadswitch){
-			if(s=="###Switch### "){
-				loadswitch = true;
-			}else{
-				file>>n;
-				
-				shared_ptr<NewsGroup> ptr(n);
-				mapName.insert(make_pair(s, ptr));
-			}
+
+	ifstream file("awesome.txt");	
+	size_t numNG=readInt(file);
+	for(size_t j=0;j<numNG;j++)
+	{	
+		
+		string ngname=readStr(file);
+		size_t  ngid=readInt(file);		
+		size_t  nArt=readInt(file);
+		size_t  lastArtId=readInt(file);
+
+		NewsGroup* ng=new NewsGroup(ngid,ngname);
+		ng->nbrArticles=lastArtId;
+		cout<<"ngname:"<<ngname<<endl;
+		cout<<"ngid:"<<ngid<<endl;
+		cout<<"nArt:"<<nArt<<endl;
+		
+		for(size_t i=0;i<nArt;i++)
+		{
+			string artName=readStr(file);
+			string author=readStr(file);
+			size_t artId=readInt(file);
+			string text=readStr(file);
+
+			
+			cout<<"artname:"<<artName<<endl;
+			cout<<"artname:"<<author<<endl;
+			cout<<"artId:"<<artId<<endl;			
+			cout<<"text:"<<text<<endl;
+
+			auto a=make_shared<Article>();
+			a->id=artId;
+			a->title=artName;
+			a->contents=text;
+			a->writer=author;
+			ng->addArticle(a);
+
 		}
-		while(file >> s){
-			file>>n;
-			shared_ptr<NewsGroup> ptr(n);
-			istringstream f(s);
-			size_t num;
-			f>>num;
-			mapId.insert(make_pair(num, ptr));
-		}
+		
+		shared_ptr<NewsGroup> sng(ng);
+		mapId[ng->id]=sng;
+		mapName[ng->name]=sng;
 	}
-*/
 }
 void Database::save(){
-ofstream file;
-file.open("awesome.txt");
-auto it = mapName.begin();
-while(it!=mapName.end()){
-	file<<it->first<<" "<<it->second<< " ";
-	++it;
+	ofstream file("awesome.txt");
+ 	saveInt(file,mapId.size());
+	for(auto ngp:mapId)
+	{
+		auto ng=ngp.second;
+		saveStr(file,ng->name);
+		saveInt(file,ng->id);
+		saveInt(file,ng->getSize());
+		saveInt(file,ng->nbrArticles);
+		auto end=ng->articleEnd();
+		for(auto it=ng->articleBegin();it!=end;++it)
+		{
+			saveStr(file,it->second->title);
+			saveStr(file,it->second->writer);
+			saveInt(file,it->second->id);
+			saveStr(file,it->second->contents);			
+		}
+	
 	}
-file<<"###Switch### ";
-auto it2 = mapId.begin();
-while(it2!=mapId.end()){
-	file<<it2->first<<" "<<it2->second<<" ";
-	++it2;
-	}
-file.close();
+		
+
+	return;
 }
