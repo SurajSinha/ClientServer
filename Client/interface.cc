@@ -8,6 +8,16 @@
 #include "interface.h"
 #include <algorithm>
 using namespace std;
+void removeLeadingSpaces(string& str){
+  while(str.begin() != str.end() && isspace(*str.begin()) ){
+    str.erase(str.begin());
+  }
+}
+void removeTrailingSpaces(string& str){
+  while(isspace(*str.rbegin())){
+    str.erase(str.length()-1);
+  }
+}
 
 int validInput()
 {
@@ -83,11 +93,14 @@ int main(int argc, char* argv[]) {
       cout<<"Type in the desired name for the newsgroup:"<<endl;
 
       string name;
-      std::cin.ignore();
       getline(cin,name);
-   // Man ska inte kunna skapa en newsgrop med whitespace som namn.
-    // namn måste innehålla minst en char.
-      
+      removeLeadingSpaces(name);
+      while(name.length()==0){
+        cout<<"Name must contain other character than only whitespace. Try Again!"<<endl;
+        getline(cin,name);
+        removeLeadingSpaces(name);
+      }
+      removeTrailingSpaces(name);
       c.sendCreateNG(name);
       bool done = a.readAnsCreateNG();
       if(done){
