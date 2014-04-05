@@ -4,6 +4,6 @@
 struct NewsGroupExistsException{};
 struct NewsGroupNonExistentException{};
 struct ArticleNonExistentException{};
-struct ArticleExistentException{};
+//struct ArticleExistentException{};
 
 #endif 
